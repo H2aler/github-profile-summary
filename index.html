@@ -2350,6 +2350,299 @@
                 card.style.boxShadow = '';
             });
         });
+
+        // GitHub API Integration
+        const GITHUB_USERNAME = 'H2aler';
+        const GITHUB_API_BASE = 'https://api.github.com';
+
+        // Language color mapping
+        const languageColors = {
+            'TypeScript': '#3178c6',
+            'JavaScript': '#f1e05a',
+            'HTML': '#e34c26',
+            'CSS': '#563d7c',
+            'Python': '#3776ab',
+            'Java': '#ed8b00',
+            'C#': '#239120',
+            'React': '#3178c6',
+            'README': '#e34c26',
+            'Shell': '#89e051',
+            'Vue': '#4fc08d',
+            'PHP': '#4f5d95',
+            'Ruby': '#701516',
+            'Go': '#00add8',
+            'Rust': '#dea584',
+            'Swift': '#fa7343',
+            'Kotlin': '#7f52ff',
+            'Dart': '#00b4ab',
+            'Scala': '#dc322f',
+            'C++': '#00599c',
+            'C': '#a8b9cc',
+            'Objective-C': '#438eff',
+            'R': '#198ce7',
+            'MATLAB': '#e16737',
+            'Perl': '#39457e',
+            'Lua': '#000080',
+            'Haskell': '#5e5086',
+            'Clojure': '#db5855',
+            'Elixir': '#6e4a7e',
+            'Erlang': '#b83998',
+            'F#': '#b845fc',
+            'OCaml': '#3be133',
+            'Julia': '#a270ba',
+            'Nim': '#ffc200',
+            'Crystal': '#000100',
+            'Zig': '#f7a41d',
+            'Unknown': '#cccccc'
+        };
+
+        // Get language color
+        function getLanguageColor(language) {
+            if (!language) return languageColors['Unknown'];
+            return languageColors[language] || languageColors['Unknown'];
+        }
+
+        // Format date
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.getFullYear();
+        }
+
+        // Get category from repository
+        function getCategory(repo) {
+            const name = repo.name.toLowerCase();
+            const description = (repo.description || '').toLowerCase();
+            
+            if (name.includes('ai') || description.includes('ai') || description.includes('tensorflow') || description.includes('neural')) {
+                return 'AI';
+            } else if (name.includes('game') || description.includes('game')) {
+                return 'GAME';
+            } else if (name.includes('webgis') || description.includes('gis') || description.includes('map')) {
+                return 'GIS';
+            } else if (name.includes('portfolio') || description.includes('portfolio')) {
+                return 'PORTFOLIO';
+            } else {
+                return 'WEB APP';
+            }
+        }
+
+        // Fetch GitHub repositories
+        async function fetchRepositories() {
+            try {
+                const response = await fetch(`${GITHUB_API_BASE}/users/${GITHUB_USERNAME}/repos?sort=updated&per_page=100&type=all`);
+                if (!response.ok) throw new Error('Failed to fetch repositories');
+                const repos = await response.json();
+                return repos.filter(repo => !repo.fork); // Exclude forked repositories
+            } catch (error) {
+                console.error('Error fetching repositories:', error);
+                return [];
+            }
+        }
+
+        // Fetch user stats
+        async function fetchUserStats() {
+            try {
+                const response = await fetch(`${GITHUB_API_BASE}/users/${GITHUB_USERNAME}`);
+                if (!response.ok) throw new Error('Failed to fetch user stats');
+                const user = await response.json();
+                return {
+                    publicRepos: user.public_repos,
+                    followers: user.followers,
+                    following: user.following
+                };
+            } catch (error) {
+                console.error('Error fetching user stats:', error);
+                return null;
+            }
+        }
+
+        // Calculate total stars
+        async function fetchTotalStars() {
+            try {
+                const repos = await fetchRepositories();
+                return repos.reduce((total, repo) => total + repo.stargazers_count, 0);
+            } catch (error) {
+                console.error('Error calculating stars:', error);
+                return 0;
+            }
+        }
+
+        // Render work card
+        function renderWorkCard(repo) {
+            const year = formatDate(repo.updated_at);
+            const category = getCategory(repo);
+            const language = repo.language || 'Unknown';
+            const color = getLanguageColor(language);
+            const description = repo.description || 'No description available';
+
+            return `
+                <div class="work-card">
+                    <div class="card-info">
+                        <div class="info-meta">
+                            <span class="meta-year">${year}</span>
+                            <span class="meta-category">${category}</span>
+                        </div>
+                        <h3 class="info-title">${repo.name}</h3>
+                        <p class="info-desc">${description}</p>
+                        <div class="language">
+                            <span class="language-color" style="background-color: ${color};"></span>
+                            ${language}
+                        </div>
+                        <a href="${repo.html_url}" target="_blank" rel="noopener" class="info-link">
+                            <span>VIEW PROJECT</span>
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <path d="M5 15L15 5M15 5H5M15 5V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Render repository card
+        function renderRepoCard(repo) {
+            const language = repo.language || 'Unknown';
+            const color = getLanguageColor(language);
+            const description = repo.description || 'No description available';
+            const visibility = repo.private ? 'Private' : 'Public';
+
+            return `
+                <a href="${repo.html_url}" target="_blank" rel="noopener" class="repo-card">
+                    <div class="repo-header">
+                        <h3 class="repo-name">${repo.name}</h3>
+                        <span class="repo-visibility">${visibility}</span>
+                    </div>
+                    <p class="repo-description">${description}</p>
+                    <div class="repo-footer">
+                        <span class="repo-language">
+                            <span class="repo-language-dot" style="background-color: ${color};"></span>
+                            ${language}
+                        </span>
+                    </div>
+                </a>
+            `;
+        }
+
+        // Update selected work section
+        async function updateSelectedWork() {
+            const repos = await fetchRepositories();
+            if (repos.length === 0) return;
+
+            // Sort by stars and updated date, take top 5
+            const selectedRepos = repos
+                .sort((a, b) => {
+                    const starDiff = b.stargazers_count - a.stargazers_count;
+                    if (starDiff !== 0) return starDiff;
+                    return new Date(b.updated_at) - new Date(a.updated_at);
+                })
+                .slice(0, 5);
+
+            const workGrid = document.querySelector('.work-grid');
+            if (workGrid) {
+                workGrid.innerHTML = selectedRepos.map(repo => renderWorkCard(repo)).join('');
+                
+                // Re-initialize animations for new cards
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.style.opacity = '1';
+                            entry.target.style.transform = 'translateY(0)';
+                        }
+                    });
+                }, { threshold: 0.1 });
+
+                workGrid.querySelectorAll('.work-card').forEach(card => {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(30px)';
+                    card.style.transition = 'opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+                    observer.observe(card);
+                });
+
+                // Re-initialize work card tilt effect
+                workGrid.querySelectorAll('.work-card').forEach(card => {
+                    card.addEventListener('mousemove', (e) => {
+                        const rect = card.getBoundingClientRect();
+                        const x = e.clientX - rect.left;
+                        const y = e.clientY - rect.top;
+                        const centerX = rect.width / 2;
+                        const centerY = rect.height / 2;
+                        const rotateX = (y - centerY) / 15;
+                        const rotateY = (centerX - x) / 15;
+                        
+                        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-10px)`;
+                    });
+
+                    card.addEventListener('mouseleave', () => {
+                        card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateY(0)';
+                    });
+                });
+            }
+        }
+
+        // Update repositories section
+        async function updateRepositories() {
+            const repos = await fetchRepositories();
+            if (repos.length === 0) return;
+
+            // Sort by updated date (most recent first)
+            const sortedRepos = repos.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+
+            const reposGrid = document.querySelector('.repositories-grid');
+            if (reposGrid) {
+                reposGrid.innerHTML = sortedRepos.map(repo => renderRepoCard(repo)).join('');
+                
+                // Re-initialize animations for new cards
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.style.opacity = '1';
+                            entry.target.style.transform = 'translateY(0)';
+                        }
+                    });
+                }, { threshold: 0.1 });
+
+                reposGrid.querySelectorAll('.repo-card').forEach(card => {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(30px)';
+                    card.style.transition = 'opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+                    observer.observe(card);
+                });
+            }
+        }
+
+        // Update hero stats
+        async function updateHeroStats() {
+            const userStats = await fetchUserStats();
+            const totalStars = await fetchTotalStars();
+            
+            if (userStats) {
+                const reposValue = document.querySelector('.hero-stats .stat-item:nth-child(1) .stat-value');
+                const starsValue = document.querySelector('.hero-stats .stat-item:nth-child(2) .stat-value');
+                const followersValue = document.querySelector('.hero-stats .stat-item:nth-child(3) .stat-value');
+                
+                if (reposValue) {
+                    reposValue.textContent = userStats.publicRepos;
+                }
+                if (starsValue) {
+                    starsValue.textContent = totalStars;
+                }
+                if (followersValue) {
+                    followersValue.textContent = userStats.followers;
+                }
+            }
+        }
+
+        // Initialize GitHub data on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Wait a bit for initial animations
+            setTimeout(async () => {
+                await Promise.all([
+                    updateSelectedWork(),
+                    updateRepositories(),
+                    updateHeroStats()
+                ]);
+            }, 2000);
+        });
     </script>
 </body>
 </html>
