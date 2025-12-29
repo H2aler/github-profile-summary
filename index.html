@@ -435,29 +435,36 @@
             letter-spacing: 2px;
             text-transform: uppercase;
             overflow: hidden;
-            transition: var(--transition);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 1;
+            display: inline-block;
         }
 
         .btn-magnetic::before {
             content: '';
             position: absolute;
             top: 0;
-            left: -100%;
-            width: 100%;
+            left: 0;
+            width: 0;
             height: 100%;
             background: linear-gradient(90deg, var(--accent-blue), var(--accent));
-            transition: left 0.3s ease;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: -1;
         }
 
         .btn-magnetic:hover::before {
-            left: 0;
+            width: 100%;
         }
 
         .btn-magnetic:hover {
             color: var(--text);
-            box-shadow: 0 0 30px rgba(0, 212, 255, 0.6), 0 0 60px rgba(255, 0, 102, 0.4);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 10px 40px rgba(0, 212, 255, 0.4), 0 0 20px rgba(0, 212, 255, 0.3);
+            border-color: var(--accent-blue);
+        }
+
+        .btn-magnetic:active {
+            transform: translateY(-1px) scale(1.02);
         }
 
         .btn-magnetic.outline {
@@ -983,6 +990,124 @@
             margin-bottom: 60px;
         }
 
+        /* Repositories Section */
+        .repositories {
+            padding: 120px 40px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .repositories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 60px;
+        }
+
+        .repo-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 25px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+            color: var(--text);
+            display: block;
+        }
+
+        .repo-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(255, 0, 102, 0.1));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 0;
+        }
+
+        .repo-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-blue);
+            box-shadow: 0 10px 40px rgba(0, 212, 255, 0.2);
+        }
+
+        .repo-card:hover::before {
+            opacity: 1;
+        }
+
+        .repo-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .repo-name {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--accent-blue);
+            margin: 0;
+        }
+
+        .repo-visibility {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            padding: 4px 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .repo-description {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .repo-footer {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            position: relative;
+            z-index: 1;
+        }
+
+        .repo-language {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .repo-language-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--accent-blue);
+        }
+
+        .repo-stats {
+            display: flex;
+            gap: 15px;
+        }
+
+        .repo-stat {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
         .contact-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -1116,6 +1241,10 @@
                 font-size: 1.3rem;
             }
 
+            .repositories-grid {
+                grid-template-columns: 1fr;
+            }
+
             .contact-grid {
                 grid-template-columns: 1fr;
             }
@@ -1148,6 +1277,7 @@
                 <li><a href="#home" class="nav-link" data-text="HOME">HOME</a></li>
                 <li><a href="#work" class="nav-link" data-text="WORK">WORK</a></li>
                 <li><a href="#about" class="nav-link" data-text="ABOUT">ABOUT</a></li>
+                <li><a href="#repositories" class="nav-link" data-text="REPOSITORIES">REPOSITORIES</a></li>
                 <li><a href="#contact" class="nav-link" data-text="CONTACT">CONTACT</a></li>
             </ul>
         </div>
@@ -1511,11 +1641,225 @@
         </div>
     </section>
 
+    <!-- Repositories Section -->
+    <section id="repositories" class="repositories">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-num">03</span>
+                <h2 class="section-title">
+                    <span class="title-word">REPOSITORIES</span>
+                </h2>
+            </div>
+            <div class="repositories-grid">
+                <a href="https://github.com/H2aler/H2aler" target="_blank" rel="noopener" class="repo-card">
+                    <div class="repo-header">
+                        <h3 class="repo-name">H2aler</h3>
+                        <span class="repo-visibility">Public</span>
+                    </div>
+                    <p class="repo-description">GitHub Profile README</p>
+                    <div class="repo-footer">
+                        <span class="repo-language">
+                            <span class="repo-language-dot" style="background-color: #e34c26;"></span>
+                            README
+                        </span>
+                    </div>
+                </a>
+                <a href="https://github.com/H2aler/github-profile-summary" target="_blank" rel="noopener" class="repo-card">
+                    <div class="repo-header">
+                        <h3 class="repo-name">github-profile-summary</h3>
+                        <span class="repo-visibility">Public</span>
+                    </div>
+                    <p class="repo-description">Interactive portfolio page with JavaScript animations</p>
+                    <div class="repo-footer">
+                        <span class="repo-language">
+                            <span class="repo-language-dot" style="background-color: #e34c26;"></span>
+                            HTML
+                        </span>
+                    </div>
+                </a>
+                <a href="https://github.com/H2aler/react-frontend-portfolio-2025" target="_blank" rel="noopener" class="repo-card">
+                    <div class="repo-header">
+                        <h3 class="repo-name">react-frontend-portfolio-2025</h3>
+                        <span class="repo-visibility">Public</span>
+                    </div>
+                    <p class="repo-description">React 기반 프론트엔드 포트폴리오 2025</p>
+                    <div class="repo-footer">
+                        <span class="repo-language">
+                            <span class="repo-language-dot" style="background-color: #3178c6;"></span>
+                            TypeScript
+                        </span>
+                    </div>
+                </a>
+                <a href="https://github.com/H2aler/WebGIS" target="_blank" rel="noopener" class="repo-card">
+                    <div class="repo-header">
+                        <h3 class="repo-name">WebGIS</h3>
+                        <span class="repo-visibility">Public</span>
+                    </div>
+                    <p class="repo-description">WebGIS - OpenLayers 기반 지도 서비스 (Vite)</p>
+                    <div class="repo-footer">
+                        <span class="repo-language">
+                            <span class="repo-language-dot" style="background-color: #f1e05a;"></span>
+                            JavaScript
+                        </span>
+                    </div>
+                </a>
+                <a href="https://github.com/H2aler/WebGIS_React" target="_blank" rel="noopener" class="repo-card">
+                    <div class="repo-header">
+                        <h3 class="repo-name">WebGIS_React</h3>
+                        <span class="repo-visibility">Public</span>
+                    </div>
+                    <p class="repo-description">WebGIS - OpenLayers 기반 지도 서비스 (React)</p>
+                    <div class="repo-footer">
+                        <span class="repo-language">
+                            <span class="repo-language-dot" style="background-color: #3178c6;"></span>
+                            TypeScript
+                        </span>
+                    </div>
+                </a>
+                <a href="https://github.com/H2aler/AI_Vision_Advanced" target="_blank" rel="noopener" class="repo-card">
+                    <div class="repo-header">
+                        <h3 class="repo-name">AI_Vision_Advanced</h3>
+                        <span class="repo-visibility">Public</span>
+                    </div>
+                    <p class="repo-description">TensorFlow.js 기반 실시간 AI 비전 분석</p>
+                    <div class="repo-footer">
+                        <span class="repo-language">
+                            <span class="repo-language-dot" style="background-color: #e34c26;"></span>
+                            HTML
+                        </span>
+                    </div>
+                </a>
+                <a href="https://github.com/H2aler/quantum-neural-viz" target="_blank" rel="noopener" class="repo-card">
+                    <div class="repo-header">
+                        <h3 class="repo-name">quantum-neural-viz</h3>
+                        <span class="repo-visibility">Public</span>
+                    </div>
+                    <p class="repo-description">양자 신경망 시각화 프로젝트</p>
+                    <div class="repo-footer">
+                        <span class="repo-language">
+                            <span class="repo-language-dot" style="background-color: #e34c26;"></span>
+                            HTML
+                        </span>
+                    </div>
+                </a>
+                <a href="https://github.com/H2aler/korean-cgv-web-developer-toolkit" target="_blank" rel="noopener" class="repo-card">
+                    <div class="repo-header">
+                        <h3 class="repo-name">korean-cgv-web-developer-toolkit</h3>
+                        <span class="repo-visibility">Public</span>
+                    </div>
+                    <p class="repo-description">CGV 서버 상태 확인 도구</p>
+                    <div class="repo-footer">
+                        <span class="repo-language">
+                            <span class="repo-language-dot" style="background-color: #e34c26;"></span>
+                            HTML
+                        </span>
+                    </div>
+                </a>
+                <a href="https://github.com/H2aler/coffee-grounds-recycling" target="_blank" rel="noopener" class="repo-card">
+                    <div class="repo-header">
+                        <h3 class="repo-name">coffee-grounds-recycling</h3>
+                        <span class="repo-visibility">Public</span>
+                    </div>
+                    <p class="repo-description">커피 찌꺼기 재활용 프로젝트</p>
+                    <div class="repo-footer">
+                        <span class="repo-language">
+                            <span class="repo-language-dot" style="background-color: #3178c6;"></span>
+                            TypeScript
+                        </span>
+                    </div>
+                </a>
+                <a href="https://github.com/H2aler/True_or_false" target="_blank" rel="noopener" class="repo-card">
+                    <div class="repo-header">
+                        <h3 class="repo-name">True_or_false</h3>
+                        <span class="repo-visibility">Public</span>
+                    </div>
+                    <p class="repo-description">AI 거짓말 탐지기</p>
+                    <div class="repo-footer">
+                        <span class="repo-language">
+                            <span class="repo-language-dot" style="background-color: #3776ab;"></span>
+                            Python
+                        </span>
+                    </div>
+                </a>
+                <a href="https://github.com/H2aler/NowHere" target="_blank" rel="noopener" class="repo-card">
+                    <div class="repo-header">
+                        <h3 class="repo-name">NowHere</h3>
+                        <span class="repo-visibility">Public</span>
+                    </div>
+                    <p class="repo-description">NowHere 프로젝트</p>
+                    <div class="repo-footer">
+                        <span class="repo-language">
+                            <span class="repo-language-dot" style="background-color: #239120;"></span>
+                            C#
+                        </span>
+                    </div>
+                </a>
+                <a href="https://github.com/H2aler/my-frontend-portfolio-2025" target="_blank" rel="noopener" class="repo-card">
+                    <div class="repo-header">
+                        <h3 class="repo-name">my-frontend-portfolio-2025</h3>
+                        <span class="repo-visibility">Public</span>
+                    </div>
+                    <p class="repo-description">CSS 기반 프론트엔드 포트폴리오</p>
+                    <div class="repo-footer">
+                        <span class="repo-language">
+                            <span class="repo-language-dot" style="background-color: #563d7c;"></span>
+                            CSS
+                        </span>
+                    </div>
+                </a>
+                <a href="https://github.com/H2aler/secure-future" target="_blank" rel="noopener" class="repo-card">
+                    <div class="repo-header">
+                        <h3 class="repo-name">secure-future</h3>
+                        <span class="repo-visibility">Public</span>
+                    </div>
+                    <p class="repo-description">보안 솔루션 DEMO</p>
+                    <div class="repo-footer">
+                        <span class="repo-language">
+                            <span class="repo-language-dot" style="background-color: #ed8b00;"></span>
+                            Java
+                        </span>
+                    </div>
+                </a>
+                <a href="https://github.com/H2aler/HTML5_AI_GAME_ONE" target="_blank" rel="noopener" class="repo-card">
+                    <div class="repo-header">
+                        <h3 class="repo-name">HTML5_AI_GAME_ONE</h3>
+                        <span class="repo-visibility">Public</span>
+                    </div>
+                    <p class="repo-description">AI 오목 게임</p>
+                    <div class="repo-footer">
+                        <span class="repo-language">
+                            <span class="repo-language-dot" style="background-color: #f1e05a;"></span>
+                            JavaScript
+                        </span>
+                    </div>
+                </a>
+                <a href="https://github.com/H2aler/frontend_portfolio_sample_10" target="_blank" rel="noopener" class="repo-card">
+                    <div class="repo-header">
+                        <h3 class="repo-name">frontend_portfolio_sample_10</h3>
+                        <span class="repo-visibility">Public</span>
+                    </div>
+                    <p class="repo-description">프론트엔드 디자인 샘플</p>
+                    <div class="repo-footer">
+                        <span class="repo-language">
+                            <span class="repo-language-dot" style="background-color: #563d7c;"></span>
+                            CSS
+                        </span>
+                    </div>
+                </a>
+            </div>
+            <div style="text-align: center; margin-top: 40px;">
+                <a href="https://github.com/H2aler?tab=repositories" target="_blank" rel="noopener" class="btn-magnetic">
+                    <span class="btn-text">VIEW ALL REPOSITORIES</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
     <!-- Contact Section -->
     <section id="contact" class="contact">
         <div class="container">
             <div class="section-header">
-                <span class="section-num">03</span>
+                <span class="section-num">04</span>
                 <h2 class="section-title">
                     <span class="title-word">GET</span>
                     <span class="title-word">IN</span>
